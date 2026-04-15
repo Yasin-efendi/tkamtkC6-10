@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Soal - Matematika Kelas 6</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 3px solid #4CAF50; padding-bottom: 15px; margin-bottom: 20px; }
+        .school { color: #666; font-size: 14px; }
+        .topics { background: #e8f5e9; padding: 10px; border-radius: 5px; margin: 15px 0; }
+        .input-group { margin: 20px 0; }
+        .input-group input { width: 100%; padding: 10px; font-size: 16px; border: 2px solid #ddd; border-radius: 5px; }
+        .input-group input.invalid { border-color: #f44336; }
+        .error { color: #f44336; font-size: 12px; display: none; }
+        .btn { background: #4CAF50; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
+        .btn:hover { background: #45a049; }
+        .question-box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin: 15px 0; background: #fafafa; }
+        .question-title { font-weight: bold; color: #2c3e50; margin-bottom: 10px; }
+        .question-image { text-align: center; margin: 15px 0; }
+        .question-image img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; }
+        .options { margin: 15px 0; }
+        .option { margin: 8px 0; padding: 10px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #e3f2fd; border-color: #2196F3; }
+        .option.selected { background: #bbdefb; border-color: #1976D2; font-weight: bold; }
+        .categories { background: #fff3e0; padding: 12px; border-radius: 5px; margin: 10px 0; font-size: 14px; }
+        .result-box { text-align: center; padding: 30px; display: none; }
+        .score { font-size: 48px; font-weight: bold; color: #4CAF50; margin: 20px 0; }
+        .discussion { background: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: left; display: none; }
+        .answer-key { color: #2e7d32; font-weight: bold; }
+        .navigation { display: flex; justify-content: space-between; margin: 20px 0; }
+        .nav-btn { padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .progress { text-align: center; color: #666; margin: 10px 0; }
+        .pictogram { font-size: 20px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Latihan Soal - Matematika Kelas 6</h1>
+            <p class="school">TKA - Kelas 6 SD 07 Negeri Katon</p>
+        </div>
+
+        <!-- Daftar Topik -->
+        <div class="topics">
+            <strong>5 Soal Latihan:</strong>
+            <ol start="6">
+                <li>Pengambilan Informasi dan Penggunaan Data</li>
+                <li>Menyelesaikan Permasalahan Terkait Penyajian Data</li>
+                <li>Penaksiran Ukuran</li>
+                <li>Volume Bangun Ruang</li>
+                <li>Laju Perubahan (Kecepatan)</li>
+            </ol>
+        </div>
+
+        <!-- Form Nama -->
+        <div id="nameSection">
+            <div class="input-group">
+                <input type="text" id="studentName" placeholder="Masukkan Nama Lengkap Anda">
+                <div class="error" id="nameError">Nama harus diisi!</div>
+            </div>
+            <button class="btn" onclick="startQuiz()">Mulai Latihan</button>
+        </div>
+
+        <!-- Section Soal -->
+        <div id="quizSection" style="display:none;">
+            <div class="progress">Soal <span id="currentQ">1</span>/10 - Tes Kemampuan Akademik</div>
+            
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>Sebelumnya</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Selanjutnya</button>
+            </div>
+
+            <div id="questionContainer">
+                <!-- Soal akan dimuat di sini secara dinamis -->
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn2" onclick="prevQuestion()" disabled>Sebelumnya</button>
+                <button class="nav-btn" id="submitBtn" onclick="submitQuiz()" style="display:none; background:#4CAF50;">Selesai</button>
+            </div>
+        </div>
+
+        <!-- Section Hasil -->
+        <div id="resultSection" class="result-box">
+            <h2>Hasil Latihan</h2>
+            <p>Atas Nama: <strong id="resultName"></strong></p>
+            <div class="score" id="finalScore">0</div>
+            <p>Nilai Akhir</p>
+            <button class="btn" onclick="location.reload()" style="background:#2196F3; margin:5px;">Ulangi Latihan</button>
+            <button class="btn" onclick="showDiscussion()" style="background:#FF9800; margin:5px;" disabled>Lihat Pembahasan</button>
+        </div>
+
+        <!-- Section Pembahasan -->
+        <div id="discussionSection" class="discussion">
+            <h3>Pembahasan Soal</h3>
+            <div id="discussionContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Database Soal 6-10
+        const questions = [
+            {
+                id: 6,
+                topic: "Pengambilan Informasi dan Penggunaan Data",
+                question: "Perhatikan diagram batang berikut tentang tinggi badan 5 siswa (dalam cm):",
+                image: "https://github.com/Yasin-efendi/tkamtkC6-10/blob/main/soal%20no%206%20TKA%20(1).jpg?raw=true",
+                categories: [
+                    "Kategori 1: Rata-rata tinggi badan kelima siswa adalah 140 cm.",
+                    "Kategori 2: Selisih tinggi tertinggi dan terendah adalah 15 cm.",
+                    "Kategori 3: Jumlah seluruh tinggi badan adalah 700 cm.",
+                    "Kategori 4: Siswa tertinggi adalah 150 cm."
+                ],
+                options: ["A. Kategori 1,2 dan 4", "B. Kategori 2,3 dan 4", "C. Kategori 1,2 dan 3", "D. Kategori 1,3 dan 4"],
+                answer: "D",
+                explanation: "<strong>Jawaban: D. Kategori 1,3 dan 4</strong><br>• Jumlah tinggi = 700 cm → Rata-rata = 700÷5 = 140 cm (Kategori 1 & 3 benar)<br>• Jika siswa tertinggi 150 cm (Kategori 4 benar), maka selisih dengan terendah harus dicek dari diagram. Berdasarkan kunci, Kategori 2 tidak termasuk dalam jawaban benar."
+            },
+            {
+                id: 7,
+                topic: "Menyelesaikan Permasalahan Terkait Penyajian Data",
+                question: "Berikut piktogram jumlah buku yang dibaca siswa dalam seminggu (setiap 📘 = 4 buku):<br><div class='pictogram'>• Senin: 📘📘📘 (12 buku)<br>• Selasa: 📘📘📘📘 (16 buku)<br>• Rabu: 📘📘 (8 buku)<br>• Kamis: 📘📘📘📘📘 (20 buku)<br>• Jumat: 📘 (4 buku)</div>",
+                categories: [
+                    "Kategori 1: Hari dengan buku terbanyak adalah Kamis.",
+                    "Kategori 2: Total buku yang dibaca = 60 buku.",
+                    "Kategori 3: Selisih Selasa dan Jumat = 7 buku.",
+                    "Kategori 4: Rata-rata buku yang dibaca tiap hari adalah = 12 buku."
+                ],
+                options: ["A. Kategori 1,2 dan 3", "B. Kategori 1,3 dan 4", "C. Kategori 1,2 dan 4", "D. Kategori 2,3 dan 4"],
+                answer: "C",
+                explanation: "<strong>Jawaban: C. Kategori 1,2 dan 4</strong><br>• Kamis: 5×4=20 buku (terbanyak) ✓<br>• Total: 12+16+8+20+4 = 60 buku ✓<br>• Selisih Selasa-Jumat: 16-4 = 12 buku (bukan 7) ✗<br>• Rata-rata: 60÷5 = 12 buku ✓"
+            },
+            {
+                id: 8,
+                topic: "Penaksiran Ukuran",
+                question: "Berat sebuah semangka biasanya paling mendekati …",
+                options: ["A. 500 gram", "B. 2 kg", "C. 20 kg", "D. 50 kg"],
+                answer: "B",
+                explanation: "<strong>Jawaban: B. 2 kg</strong><br>Semangka ukuran sedang biasanya memiliki berat antara 1,5 - 3 kg. 500 gram terlalu ringan, sedangkan 20 kg dan 50 kg tidak realistis untuk semangka biasa."
+            },
+            {
+                id: 9,
+                topic: "Volume Bangun Ruang",
+                question: "Perhatikan gambar bangun ruang gabungan berikut:<br>Sebuah kubus dengan sisi 4 cm diletakkan di atas balok berukuran panjang 8 cm, lebar 4 cm, tinggi 3 cm. Volume total bangun tersebut adalah …",
+                options: ["A. 64 cm³", "B. 96 cm³", "C. 128 cm³", "D. 160 cm³"],
+                answer: "D",
+                explanation: "<strong>Jawaban: D. 160 cm³</strong><br>• Volume kubus = s³ = 4³ = 64 cm³<br>• Volume balok = p×l×t = 8×4×3 = 96 cm³<br>• Volume total = 64 + 96 = 160 cm³"
+            },
+            {
+                id: 10,
+                topic: "Laju Perubahan (Kecepatan)",
+                question: "Seorang atlet berlari sejauh 9 km dalam waktu 30 menit. Kecepatan rata-rata atlet tersebut adalah …",
+                options: ["A. 9 km/jam", "B. 12 km/jam", "C. 18 km/jam", "D. 27 km/jam"],
+                answer: "C",
+                explanation: "<strong>Jawaban: C. 18 km/jam</strong><br>• Waktu: 30 menit = 0,5 jam<br>• Kecepatan = Jarak ÷ Waktu = 9 km ÷ 0,5 jam = 18 km/jam"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let studentName = "";
+
+        function startQuiz() {
+            const nameInput = document.getElementById('studentName');
+            const error = document.getElementById('nameError');
+            
+            if (!nameInput.value.trim()) {
+                nameInput.classList.add('invalid');
+                error.style.display = 'block';
+                return;
+            }
+            
+            studentName = nameInput.value.trim();
+            document.getElementById('nameSection').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('currentQ').textContent = q.id;
+            
+            let html = `<div class="question-box">
+                <div class="question-title">Soal ${q.id}. ${q.topic}</div>
+                <p>${q.question}</p>`;
+            
+            if (q.image) {
+                html += `<div class="question-image"><img src="${q.image}" alt="Diagram Soal ${q.id}"></div>`;
+            }
+            
+            if (q.categories) {
+                html += `<div class="categories">${q.categories.join('<br>')}</div>`;
+            }
+            
+            html += `<div class="options">`;
+            q.options.forEach((opt, idx) => {
+                const selected = userAnswers[q.id] === opt.charAt(0) ? 'selected' : '';
+                html += `<div class="option ${selected}" onclick="selectOption(${q.id}, '${opt.charAt(0)}', this)">${opt}</div>`;
+            });
+            html += `</div></div>`;
+            
+            document.getElementById('questionContainer').innerHTML = html;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('prevBtn2').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'block' : 'none';
+        }
+
+        function selectOption(qid, answer, element) {
+            userAnswers[qid] = answer;
+            document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            // Hitung skor
+            let score = 0;
+            questions.forEach(q => {
+                if (userAnswers[q.id] === q.answer) score += 20;
+            });
+            
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultName').textContent = studentName;
+            document.getElementById('finalScore').textContent = score;
+            
+            // Siapkan pembahasan
+            let discussionHTML = '';
+            questions.forEach(q => {
+                const userAns = userAnswers[q.id] || 'Tidak dijawab';
+                const isCorrect = userAns === q.answer;
+                discussionHTML += `
+                    <div style="margin-bottom:20px; padding:15px; background:white; border-radius:5px; border-left:4px solid ${isCorrect ? '#4CAF50' : '#f44336'}">
+                        <strong>Soal ${q.id}</strong><br>
+                        ${q.question}<br><br>
+                        <strong>Jawaban Anda:</strong> ${userAns} ${isCorrect ? '✓' : '✗'}<br>
+                        <strong class="answer-key">Kunci: ${q.answer}</strong><br><br>
+                        ${q.explanation}
+                    </div>
+                `;
+            });
+            document.getElementById('discussionContent').innerHTML = discussionHTML;
+        }
+
+        function showDiscussion() {
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('discussionSection').style.display = 'block';
+        }
+
+        // Validasi input nama real-time
+        document.getElementById('studentName').addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('invalid');
+                document.getElementById('nameError').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
